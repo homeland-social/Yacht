@@ -19,6 +19,7 @@ ENV PYTHONIOENCODING=UTF-8
 ENV THEME=Default
 
 WORKDIR /api
+COPY ./backend/pip_constraint.txt .
 COPY ./backend/requirements.txt .
 
 # Install Dependancies
@@ -30,22 +31,30 @@ RUN \
 	postgresql-dev \
 	python3-dev \
 	libffi-dev \
-	ruby-dev &&\
+	ruby-dev && \
  echo "**** install packages ****" && \
  apk add --no-cache \
 	python3 \
 	py3-pip \
 	mysql-dev \
-        postgresql-dev \
+    postgresql-dev \
 	mysql-dev \
-	nginx &&\
- gem install sass &&\
+	nginx && \
+ gem install sass && \
  echo "**** Installing Python Modules ****" && \
- pip3 install wheel &&\
- pip3 install -r requirements.txt &&\
- echo "**** Cleaning Up ****" &&\
+ pip3 install wheel && \
+ PIP_CONSTRAINT=pip_constraint.txt pip3 install --no-cache-dir -r requirements.txt && \
+ echo "**** Cleaning Up ****" && \
  apk del --purge \
-	build-dependencies && \
+	build-dependencies \
+	g++ \
+	make \
+	postgresql-dev \
+	python3-dev \
+	libffi-dev \
+	ruby-dev \
+	ruby \
+	mysql-dev && \
  rm -rf \
 	/root/.cache \
 	/tmp/*
